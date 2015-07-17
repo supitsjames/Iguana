@@ -1,0 +1,67 @@
+#include "Main.h"
+
+int convertToBase64(int orig) {
+	if (orig >= 0 && orig < 26) {
+		return orig + 65;
+	}
+	else if (orig >= 26 && orig < 62) {
+		return orig + 71;
+	}
+	else if (orig == 62)
+		return 43;
+	else if (orig == 63)
+		return 47;
+	return 33;
+}
+
+int main() {
+
+	string hex;
+	getline(cin, hex);
+
+	/*
+	hex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+	cout << hex;
+	*/
+
+	cout << endl << endl;
+	cout << "Length: " << hex.length() << endl;
+
+	int *intArray = new int[hex.length()];
+	for (int i = 0; i < hex.length(); i++) {
+		intArray[i] = static_cast<int>(hex[i]);
+//		cout << intArray[i] << endl;
+	}
+
+	cout << endl;
+
+	string binary = "";
+	for (int i = 0; i < hex.length(); i++) {
+		string temp = bitset<8>(intArray[i]).to_string();
+		binary = binary + temp;
+		cout << temp << " ";
+	}
+
+	cout << endl << endl;
+
+	string base64 = "";
+	for (int i = 0; i < hex.length() + (2*hex.length()/6); i++) {
+		string temp = binary.substr(0, 6);
+		
+		int num = static_cast<int>(bitset<6>(temp).to_ulong());
+
+		char letter = static_cast<char>(convertToBase64(num));
+
+		cout << temp << "  :  " << num << "  :  " << letter  << endl;
+	//	printf("%s  :  %2d  :  %c \n", temp, num, letter);	printf needs serious improvement lol
+
+		base64 = base64 + letter;
+		binary = binary.substr(6, binary.length() - 6);
+	}
+	cout << endl;
+	cout << base64;
+	
+		
+	cin.get();
+	return 0;
+}
