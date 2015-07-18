@@ -1,0 +1,138 @@
+#include "Main.h"
+ 
+int convertToBase64(int orig) {
+
+	if (orig >= 0 && orig < 26) 
+		return orig + 65;
+	
+	else if (orig >= 26 && orig < 52) 
+		return orig + 71;
+	
+	else if (orig >= 52 && orig < 62)
+		return orig - 4;
+
+	else if (orig == 62)
+		return 43;
+
+	else if (orig == 63)
+		return 47;
+
+	return 33;
+
+}
+
+int convertHexToDecimal(string hex){
+	if (hex == "a" || hex == "A")
+		return 10;
+	if (hex == "b" || hex == "B")
+		return 11;
+	if (hex == "c" || hex == "C")
+		return 12;
+	if (hex == "d" || hex == "D")
+		return 13;
+	if (hex == "e" || hex == "E")
+		return 14;
+	if (hex == "f" || hex == "F")
+		return 15;
+	return static_cast<int>(hex[0]) - 48;
+}
+
+string convertHexToBinary(string hex){
+	string binary = "";
+	long double actualNum = 0;
+	for (int i = 0; i < hex.length(); i++){
+		int num = convertHexToDecimal(hex.substr(i,1));
+	//	cout << num << "  :  ";
+
+		long double tempNum = num * pow(16, (hex.length()-1 - i));
+	//	cout << tempNum << endl;
+
+		actualNum = actualNum + tempNum;
+	}
+
+	binary = bitset<72>(actualNum).to_string();
+
+	string subtemp = binary;
+	bool broken = false;
+	while (broken = false){
+		string subtemp2 = subtemp.substr(0, 6);
+		cout << bitset<6>(subtemp).to_ulong();
+		if (bitset<6>(subtemp).to_ulong() != 0)
+			broken = true;
+		if (subtemp.length() <= 6)
+			broken = true;
+		subtemp = subtemp.substr(6, subtemp.length() - 6);
+	}
+
+//	cout << binary << endl;
+//	cout << actualNum << endl;
+	return binary;
+}
+ 
+int main() {
+	
+	string hex;
+
+	getline(cin, hex);
+	/*
+	hex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+	cout << hex;
+	*/
+ 
+	cout << endl << endl;
+
+	cout << "Length: " << hex.length() << endl;
+ 
+	int *intArray = new int[hex.length()];
+
+	for (int i = 0; i < hex.length(); i++) {
+		intArray[i] = static_cast<int>(hex[i]);
+		// cout << intArray[i] << endl;
+	}
+ 
+	cout << endl;
+	/*
+	string binary = "";
+	for (int i = 0; i < hex.length(); i++) {
+		string temp = bitset<8>(intArray[i]).to_string();
+		binary = binary + temp;
+		cout << temp << " ";
+
+	}
+	*/
+
+	string binary = convertHexToBinary(hex);
+	int origLength = binary.length();
+ 
+	cout << endl << endl;
+ 
+	string base64 = "";
+	
+	
+	bool leftSide = true;
+	for (int i = 0; i < origLength/6; i++) {
+
+		string temp = binary.substr(0, 6);
+
+		cout << temp << " ";
+
+		int num = static_cast<int>(bitset<6>(temp).to_ulong());
+		char letter = static_cast<char>(convertToBase64(num));
+	//	cout << temp << " : " << num << " : " << letter << endl;
+
+		
+		base64 = base64 + letter;
+		
+
+		binary = binary.substr(6, binary.length() - 6);
+
+	}
+
+	cout << endl << endl;
+	cout << base64;
+
+
+	cin.get();
+	return 0;
+
+}
